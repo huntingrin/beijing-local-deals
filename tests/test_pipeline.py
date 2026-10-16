@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 from datetime import timedelta
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from common import now, public_url
+from common import now, public_url, emit
 from deals import validate, build
 from weixin import parse_search, parse_article, parse_redirect, classify, Session, stop
 
@@ -13,6 +13,11 @@ def fixture():
     d=json.loads((ROOT/'examples/offers.json').read_text(encoding='utf-8'));d.pop('example');n=now();d['checked_at']=n.isoformat();d['target_date']=n.date().isoformat();o=d['offers'][0];o['valid_from']=(n-timedelta(days=1)).date().isoformat();o['valid_until']=(n+timedelta(days=1)).date().isoformat();o['sources'][0]['checked_at']=n.isoformat();return d
 
 class Pipeline(unittest.TestCase):
+    def test_chinese_json_on_windows_ansi_pipe(self):
+        import io
+        raw=io.BytesIO();stream=io.TextIOWrapper(raw,encoding='cp1252')
+        emit(json.dumps({'file':'中文说明卡.png'},ensure_ascii=False),file=stream);stream.flush()
+        self.assertEqual(json.loads(raw.getvalue().decode('cp1252'))['file'],'中文说明卡.png')
     def test_qr_and_report_roundtrip_and_html_escaping(self):
         d=fixture();d['offers'][0]['title']='<script>alert(1)</script>'
         with tempfile.TemporaryDirectory() as t:

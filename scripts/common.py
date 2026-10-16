@@ -1,13 +1,23 @@
 """Shared URL and time validation; no network side effects."""
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlsplit, parse_qsl, unquote
-import ipaddress, re
+import ipaddress, re, sys
 
 BEIJING = timezone(timedelta(hours=8))
 SENSITIVE = re.compile(r'^(?:access_?token|refresh_?token|auth_?token|session_?token|token|pass_ticket|wap_sid|wxtoken|wxuin|uin|key|sessionid|session|cookie|authorization|password|userid|user_id|openid|unionid|mobile|phone)$', re.I)
 
 def now():
     return datetime.now(BEIJING)
+
+def emit(value, *, file=None):
+    """Keep UTF-8 artifacts intact when a Windows pipe only accepts ANSI text."""
+    stream = file or sys.stdout
+    text = str(value) + '\n'
+    try:
+        stream.write(text)
+    except UnicodeEncodeError:
+        encoding = getattr(stream, 'encoding', None) or 'ascii'
+        stream.write(text.encode(encoding, errors='backslashreplace').decode(encoding))
 
 def stamp(value):
     d = datetime.fromisoformat(value.replace('Z', '+00:00'))

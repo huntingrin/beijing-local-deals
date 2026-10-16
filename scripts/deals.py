@@ -6,7 +6,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 import jsonschema, qrcode, zxingcpp
 from PIL import Image, ImageDraw, ImageFont
-from common import now, stamp, public_url
+from common import now, stamp, public_url, emit
 
 ROOT=Path(__file__).resolve().parent.parent
 LABELS={'article':'文章入口码','activity':'活动入口码','mini_program':'原始小程序码'}
@@ -65,7 +65,7 @@ def init_run(request,out):
       'weixin':[f'北京 {request} {month}',f'北京 {request} 福利 领券']}
     dump(out/'search-plan.json',{'request':request,'created_at':n.isoformat(),'recent_since':(n-timedelta(days=30)).date().isoformat(),'queries':queries,'note':'由Agent运行可用渠道；不得将本计划当成已搜索结果'})
     dump(out/'offers.json',{'request':request,'checked_at':n.isoformat(),'target_date':n.date().isoformat(),'channels':{k:{'status':'not_needed','detail':'尚未运行；交付前必须更新为实际状态'} for k in queries},'offers':[],'leads':[]})
-    print(str(out.resolve()/'search-plan.json'))
+    emit(str(out.resolve()/'search-plan.json'))
 
 def qr_for(o,base,out):
     e=o['entry']; payload=e.get('url'); prefix=o['id']+'-'+e['kind']; digest=None
@@ -168,7 +168,7 @@ def build(input_path,out,*,historical=False,show=False,font=None):
     (out/'index.html').write_text(report,encoding='utf-8');(out/'说明.txt').write_text(title+'\n'+channels+'\n\n'+'\n\n'.join(summaries),encoding='utf-8')
     dump(out/'offers.json',data);dump(out/'manifest.json',{'generated_at':now().isoformat(),'historical':historical,'entries':len(manifests),'distinct_activities':len({o['activity_id'] for o in data['offers']}),'font_cards':bool(font_path),'files':manifests})
     if show and display: open_files(display)
-    print(json.dumps({'report':str(out/'index.html'),'entries':len(manifests),'distinct_activities':len({o['activity_id'] for o in data['offers']}),'opened':bool(show and display),'images':[str(x) for x in display]},ensure_ascii=False))
+    emit(json.dumps({'report':str(out/'index.html'),'entries':len(manifests),'distinct_activities':len({o['activity_id'] for o in data['offers']}),'opened':bool(show and display),'images':[str(x) for x in display]},ensure_ascii=False))
     return manifests
 
 def main():
@@ -180,6 +180,6 @@ def main():
         if a.cmd=='init':init_run(a.request,a.out)
         else:build(a.input,a.out,historical=a.historical,show=a.open,font=a.font)
     except (ValueError,RuntimeError,jsonschema.ValidationError,OSError) as e:
-        print('未完成：'+str(e),file=sys.stderr);raise SystemExit(2)
+        emit('未完成：'+str(e),file=sys.stderr);raise SystemExit(2)
 
 if __name__=='__main__':main()

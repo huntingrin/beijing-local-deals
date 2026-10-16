@@ -7,7 +7,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urljoin, urlsplit
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
-from common import now, public_url
+from common import now, public_url, emit
 
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0'
 HOSTS = {'weixin.sogou.com', 'mp.weixin.qq.com'}
@@ -124,13 +124,13 @@ def main():
     p=sub.add_parser('stop'); p.add_argument('--reason',required=True)
     p=sub.add_parser('parse'); p.add_argument('--kind',choices=['search','article'],required=True); p.add_argument('--html',required=True); p.add_argument('--url',default=''); p.add_argument('--out',required=True)
     args=a.parse_args()
-    if args.cmd=='stop': print(stop(args.reason)); return
+    if args.cmd=='stop': emit(stop(args.reason)); return
     if args.cmd=='parse':
         result=(parse_search if args.kind=='search' else parse_article)(Path(args.html).read_text(encoding='utf-8'),args.url)
-        write_json(Path(args.out),result); print(result['state']); return
+        write_json(Path(args.out),result); emit(result['state']); return
     # A previous block is checked before creating an output directory or any request.
     if (state_dir()/'weixin-stop.json').exists():
-        print(json.dumps({'state':'blocked','reason':'prior_verification_stop','network_requests':0})); raise SystemExit(2)
+        emit(json.dumps({'state':'blocked','reason':'prior_verification_stop','network_requests':0})); raise SystemExit(2)
     session=Session(args.out); result={'state':'started','items':[],'checked_at':now().isoformat()}
     try:
         if args.cmd=='article':
@@ -153,7 +153,7 @@ def main():
     except (ValueError,RuntimeError) as e:
         result.update(state='blocked' if str(e).startswith('blocked:') else 'error',reason=str(e))
     result['checked_at']=now().isoformat(); write_json(session.out/'result.json',result)
-    print(json.dumps({'state':result['state'],'result':str(session.out/'result.json'),'requests':session.n},ensure_ascii=False))
+    emit(json.dumps({'state':result['state'],'result':str(session.out/'result.json'),'requests':session.n},ensure_ascii=False))
     if result['state'] not in ('search_ok','article_ok','media_only','empty_results'): raise SystemExit(2)
 
 if __name__=='__main__': main()
