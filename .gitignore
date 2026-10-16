@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+runs/
+dist/
+*.egg-info/
+.env
+*cookie*
+weixin-stop.json

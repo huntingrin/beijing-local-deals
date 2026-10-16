@@ -1,0 +1,4 @@
+interface:
+  display_name: "北京吃喝玩乐优惠"
+  short_description: "实时交叉检索北京优惠，核对门槛与时效，交付带说明的扫码入口"
+  default_prompt: "使用 $beijing-local-deals 查找符合我需求的北京最新优惠，并返回附条件说明的二维码。"

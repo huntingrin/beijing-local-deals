@@ -1,0 +1,73 @@
+{
+  "example": true,
+  "request": "示例：北京观演优惠（只演示格式，非当前推荐）",
+  "checked_at": "2026-10-16T18:00:00+08:00",
+  "target_date": "2026-10-16",
+  "channels": {
+    "web": {
+      "status": "searched",
+      "detail": "示例：官方活动公告"
+    },
+    "xiaohongshu": {
+      "status": "unavailable",
+      "detail": "示例环境未连接"
+    },
+    "weixin": {
+      "status": "blocked",
+      "detail": "示例：验证阻塞，未绕过"
+    }
+  },
+  "offers": [
+    {
+      "id": "01",
+      "activity_id": "demo-theatre",
+      "title": "示例观演满减活动",
+      "category": "演出",
+      "area": "北京指定参演项目（示例）",
+      "benefit": "示例规则：满100元减40元；满足门槛后100元票价减至60元，不代表任意场次有100元票。",
+      "conditions": [
+        "本条为虚构格式示例，不可实际领取",
+        "指定项目；库存、叠加条件以实际活动为准"
+      ],
+      "valid_from": "2026-10-01",
+      "valid_until": "2026-10-31",
+      "claim_by": null,
+      "steps": [
+        "打开示例网址",
+        "阅读格式说明；不要尝试领取"
+      ],
+      "affiliate": "unknown",
+      "verification": {
+        "rules": "article_reported",
+        "entry": "unverified",
+        "claim": "not_attempted",
+        "notes": "仅演示字段；没有真实优惠验证。"
+      },
+      "sources": [
+        {
+          "url": "https://example.com/offer",
+          "name": "示例来源",
+          "channel": "web",
+          "origin_id": "example-only",
+          "published_at": "2026-10-01",
+          "checked_at": "2026-10-16T18:00:00+08:00",
+          "body_read": true,
+          "role": "article"
+        }
+      ],
+      "entry": {
+        "kind": "activity",
+        "url": "https://example.com/offer",
+        "image": null,
+        "image_reviewed": false,
+        "notes": "示例URL，非优惠入口。"
+      }
+    }
+  ],
+  "leads": [
+    {
+      "title": "只有宣传金额的候选",
+      "reason": "未说明使用门槛，未生成二维码"
+    }
+  ]
+}

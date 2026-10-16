@@ -1,0 +1,18 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "type":"object","required":["request","checked_at","target_date","channels","offers","leads"],
+ "properties":{
+  "request":{"type":"string","minLength":1},"checked_at":{"type":"string","format":"date-time"},"target_date":{"type":"string","format":"date"},
+  "channels":{"type":"object","required":["web","xiaohongshu","weixin"],"additionalProperties":{"type":"object","required":["status","detail"],"properties":{"status":{"enum":["searched","blocked","unavailable","not_needed"]},"detail":{"type":"string","minLength":1}}}},
+  "leads":{"type":"array","items":{"type":"object","required":["title","reason"],"properties":{"title":{"type":"string"},"reason":{"type":"string"}}}},
+  "offers":{"type":"array","items":{"type":"object","required":["id","activity_id","title","category","area","benefit","conditions","valid_from","valid_until","claim_by","steps","affiliate","verification","sources","entry"],
+   "properties":{
+    "id":{"type":"string","pattern":"^[a-zA-Z0-9_-]{1,40}$"},"activity_id":{"type":"string","minLength":1},"title":{"type":"string","minLength":1},"category":{"type":"string"},"area":{"type":"string","minLength":1},"benefit":{"type":"string","minLength":1},"conditions":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+    "valid_from":{"type":"string","format":"date"},"valid_until":{"type":"string","format":"date"},"claim_by":{"type":["string","null"],"format":"date"},"steps":{"type":"array","minItems":1,"items":{"type":"string"}},"affiliate":{"enum":["yes","no","unknown"]},
+    "verification":{"type":"object","required":["rules","entry","claim","notes"],"properties":{"rules":{"enum":["official_checked","article_reported","unknown"]},"entry":{"enum":["page_checked","user_confirmed","unverified"]},"claim":{"enum":["not_attempted","user_confirmed"]},"notes":{"type":"string","minLength":1},"entry_evidence":{"type":"string","minLength":1},"claim_evidence":{"type":"string","minLength":1}}},
+    "sources":{"type":"array","minItems":1,"items":{"type":"object","required":["url","name","channel","origin_id","published_at","checked_at","body_read","role"],"properties":{"url":{"type":"string","format":"uri"},"name":{"type":"string","minLength":1},"channel":{"enum":["web","xiaohongshu","weixin"]},"origin_id":{"type":"string","minLength":1},"published_at":{"type":["string","null"]},"checked_at":{"type":"string","format":"date-time"},"body_read":{"type":"boolean"},"role":{"enum":["official","article","community"]}}}},
+    "entry":{"type":"object","required":["kind","url","image","image_reviewed","notes"],"properties":{"kind":{"enum":["article","activity","mini_program"]},"url":{"type":["string","null"],"format":"uri"},"image":{"type":["string","null"]},"image_reviewed":{"type":"boolean"},"notes":{"type":"string","minLength":1}}}
+   }
+  }}
+ }
+}

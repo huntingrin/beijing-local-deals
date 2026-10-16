@@ -1,0 +1,7 @@
+The search selectors, timestamp parsing and literal-fragment redirect extraction
+in scripts/weixin.py are adapted to Python from tjx666/wx-search-cli,
+commit 70b75b71384b4bcfce86be744b685f02f9440c16 (2026-10-16 research baseline).
+Source: https://github.com/tjx666/wx-search-cli
+License: MIT; copyright and full terms in wx-search-cli-LICENSE.
+Network orchestration and stopping behavior are different; upstream live test
+results do not establish this adapter's live reliability.
